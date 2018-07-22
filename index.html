@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head><title>GHStatus</title></head>
+<body>
+    <script>
+var apiLib = {
+    get: function (site,callback) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                callback(JSON.parse(this.responseText));
+            }
+        };
+        xhttp.open('GET', site, true);
+        xhttp.send();
+    }
+};
+var needed = [];
+function ghStatus(user,repo) {
+apiLib.get("https://api.github.com/repos/"+user+"/"+repo+"/issues", function(data) {
+for(var i=0; i<data.length; i++) {
+if(data[i].comments===0) {
+needed.push(data[i].title+"~ needs attention ~"+user+" "+repo+" ");
+}
+        console.log(data[i].comments);
+// help wanted code next
+    
+    var tags = data[i].labels;
+    var d = 0;
+    for(var aaa=0;aaa < tags.length; aaa++) {
+    if(tags[aaa].name==="help wanted"){
+    d++;
+    }
+    if(d!==0) {
+    needed.push(data[i].title+"~ help wanted ~"+user+" "+repo+" ");
+    }
+    }
+    
+    
+}
+    console.log(data);
+});
+}
+    var datas = ["skylarkstudios.github.io","GHStatus","platformercraft"];
+    
+    for(var aa=0;aa<datas.length;aa++) {
+ghStatus("SkylarkStudios",datas[aa]);
+        
+    }
+</script>
+<div id="p" onclick="this.innerHTML=needed.join(' -~- ');">Click here to get data</div>
+
+
+</body>
+</html>
